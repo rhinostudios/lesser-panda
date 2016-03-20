@@ -1,5 +1,5 @@
 var CONST = require('../const'),
-    EventEmitter = require('engine/eventemitter3'),
+    EventEmitter = require('eventemitter3'),
     // Internal event used by composed emitter
     TICK = 'tick';
 

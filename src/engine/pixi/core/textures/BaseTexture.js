@@ -1,6 +1,8 @@
 var utils = require('../utils'),
     CONST = require('../const'),
-    EventEmitter = require('engine/eventemitter3');
+    EventEmitter = require('eventemitter3'),
+    determineCrossOrigin = require('../utils/determineCrossOrigin'),
+    bitTwiddle = require('engine/bit-twiddle');
 
 /**
  * A texture stores the information that represents an image. All textures have a base texture.
@@ -128,7 +130,17 @@ function BaseTexture(source, scaleMode, resolution)
      *
      * @member {boolean}
      */
-    this.mipmap = false;
+    this.mipmap = CONST.MIPMAP_TEXTURES;
+
+
+    /**
+     *
+     * Set this to true if a mipmap of this texture needs to be generated. This value needs to be set before the texture is used
+     * Also the texture must be a power of two size to work
+     *
+     * @member {boolean}
+     */
+    this.wrap = CONST.MIPMAP_TEXTURES;
 
     /**
      * A map of renderer IDs to webgl textures
@@ -136,7 +148,9 @@ function BaseTexture(source, scaleMode, resolution)
      * @member {object<number, WebGLTexture>}
      * @private
      */
-    this._glTextures = {};
+    this._glTextures = [];
+    this._enabled = 0;
+    this._id = 0;
 
     // if no source passed don't try to load
     if (source)
@@ -178,7 +192,7 @@ BaseTexture.prototype.update = function ()
     this.width = this.realWidth / this.resolution;
     this.height = this.realHeight / this.resolution;
 
-    this.isPowerOfTwo = utils.isPowerOfTwo(this.realWidth, this.realHeight);
+    this.isPowerOfTwo = bitTwiddle.isPow2(this.realWidth) && bitTwiddle.isPow2(this.realHeight);
 
     this.emit('update', this);
 };
@@ -378,19 +392,16 @@ BaseTexture.fromImage = function (imageUrl, crossorigin, scaleMode)
 {
     var baseTexture = utils.BaseTextureCache[imageUrl];
 
-    if (crossorigin === undefined && imageUrl.indexOf('data:') !== 0)
-    {
-        crossorigin = true;
-    }
-
     if (!baseTexture)
     {
         // new Image() breaks tex loading in some versions of Chrome.
         // See https://code.google.com/p/chromium/issues/detail?id=238071
         var image = new Image();//document.createElement('img');
-        if (crossorigin)
+
+
+        if (crossorigin === undefined && imageUrl.indexOf('data:') !== 0)
         {
-            image.crossOrigin = '';
+            image.crossOrigin = determineCrossOrigin(imageUrl);
         }
 
         baseTexture = new BaseTexture(image, scaleMode);

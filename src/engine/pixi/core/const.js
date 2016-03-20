@@ -11,7 +11,7 @@ var CONST = {
      * @constant
      * @property {string} VERSION
      */
-    VERSION: '3.0.10-dev',
+    VERSION: '4.0.0-dev',
 
     /**
      * @property {number} PI_2 - Two Pi
@@ -150,6 +150,37 @@ var CONST = {
     },
 
     /**
+     * The wrap modes that are supported by pixi.
+     *
+     * The DEFAULT wrap mode affects the default wraping mode of future operations.
+     * It can be re-assigned to either CLAMP or REPEAT, depending upon suitability.
+     * If the texture is non power of two then clamp will be used regardless as webGL can only use REPEAT if the texture is po2
+     * This property only affects WebGL
+     * @static
+     * @constant
+     * @property {object} WRAP_MODES
+     * @property {number} WRAP_MODES.DEFAULT=CLAMP
+     * @property {number} WRAP_MODES.CLAMP The textures uvs are clamped
+     * @property {number} WRAP_MODES.REPEAT The texture uvs tile and repeat
+     * @property {number} WRAP_MODES.MIRRORED_REPEAT The texture uvs tile and repeat with mirroring
+     */
+    WRAP_MODES: {
+        DEFAULT:        0,
+        CLAMP:          0,
+        REPEAT:         1,
+        MIRRORED_REPEAT:2
+    },
+
+    /**
+     * If set to true WebGL will attempt make textures mimpaped by default
+     * Mipmapping will only succeed if the base texture uploaded has power of two dimensions
+     * @static
+     * @constant
+     * @property {bool} MIPMAP_TEXTURES
+     */
+    MIPMAP_TEXTURES:true,
+
+    /**
      * The prefix that denotes a URL is for a retina asset
      *
      * @static
@@ -215,7 +246,8 @@ var CONST = {
 
     // TODO: maybe change to SPRITE.BATCH_SIZE: 2000
     // TODO: maybe add PARTICLE.BATCH_SIZE: 15000
-    SPRITE_BATCH_SIZE: 2000 //nice balance between mobile and desktop machines
+    SPRITE_BATCH_SIZE: 4096, //nice balance between mobile and desktop machines
+    SPRITE_MAX_TEXTURES: require('./utils/maxRecommendedTextures')(32)//this is the MAXIMUM - various gpus will have there own limits.
 };
 
 module.exports = CONST;

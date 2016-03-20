@@ -1,4 +1,5 @@
 var core = require('../../core');
+// @see https://github.com/substack/brfs/issues/25
 
 
 /**
@@ -10,19 +11,19 @@ var core = require('../../core');
  */
 function GrayFilter()
 {
-    core.AbstractFilter.call(this,
+    core.Filter.call(this,
         // vertex shader
-        null,
+         require('./gray.vert'),
         // fragment shader
-        require('./gray.frag'),
-        // set the uniforms
-        {
-            gray: { type: '1f', value: 1 }
-        }
+         require('./gray.frag')
     );
+
+    this.uniforms.gray = 1;
+
+    this.glShaderKey = 'gray';
 }
 
-GrayFilter.prototype = Object.create(core.AbstractFilter.prototype);
+GrayFilter.prototype = Object.create(core.Filter.prototype);
 GrayFilter.prototype.constructor = GrayFilter;
 module.exports = GrayFilter;
 
@@ -36,11 +37,11 @@ Object.defineProperties(GrayFilter.prototype, {
     gray: {
         get: function ()
         {
-            return this.uniforms.gray.value;
+            return this.uniforms.gray;
         },
         set: function (value)
         {
-            this.uniforms.gray.value = value;
+            this.uniforms.gray = value;
         }
     }
 });

@@ -110,7 +110,7 @@ module.exports = function ()
             var loadOptions = {
                 crossOrigin: resource.crossOrigin,
                 loadType: Resource.LOAD_TYPE.IMAGE,
-                metadata: resource.metadata.imageMetadata,
+                metadata: resource.metadata.imageMetadata
             };
             // load the texture for the font
             this.add(resource.name + '_image', textureUrl, loadOptions, function (res) {

@@ -5,9 +5,11 @@ var core = module.exports = require('./core');
 
 // Uncomment to import any plugins you want to use
 core.extras         = require('./extras');
+core.filters        = require('./filters');
 core.interaction    = require('./interaction');
-// core.filters        = require('./filters');
-// core.mesh           = require('./mesh');
+core.mesh           = require('./mesh');
+core.particles           = require('./particles');
+core.accessibility           = require('./accessibility');
 
 // Add some helpers
 var activeScene = null;
